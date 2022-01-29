@@ -1,0 +1,47 @@
+# Setting up postgres in docker and importing some data
+
+#installing docker
+sudo apt install docker.io 
+
+# starting docker               
+sudo systemctl enable docker   
+            
+# pulling pstgres image from Docker Hub
+sudo docker pull postgres                  
+sudo docker images  
+
+# Creating a Directory for storing and interacting with local files
+mkdir -p $HOME/docker/volumes/postgres      
+
+# Now starting postgres via docker
+sudo docker run --rm   --name postgres-docker -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 -v $HOME/docker/volumes/postgres:/var/lib/postgresql/data  postgres                        
+sudo docker exec -it postgres-docker psql -U postgres
+
+# Creating a databse named new_database 
+CREATE DATABASE new_database;  
+    
+# connecting to new_database           
+\c new_database;                              
+
+# Now creating a table Cancer_rate_by_countries in new_database
+CREATE TABLE Cancer_rate_by_countries
+(rank numeric(5),
+Country varchar,
+Cancer_Rate numeric(5));
+
+#Importing data from Cancer_rate_by_countries.csv and dumping it to the table earlier created
+\copy Cancer_rate_by_countries from '/var/lib/postgresql/data/Cancer_rate_by_countries.csv' delimiter ',' csv header;
+
+# to verify 
+SELECT * FROM Cancer_rate_by_countries;
+
+
+==============================================================================================
+
+# For pulling jupyter image from dockerhub and running jupyter container
+docker run -p 8888:8888 jupyter/scipy-notebook:b418b67c225b
+
+
+
+
+
